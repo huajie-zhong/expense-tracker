@@ -1,28 +1,67 @@
-document.getElementById('expenseForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    // Add logic to handle form submission (e.g., send data to the server)
-    // You will need AJAX/fetch to send data to the server
-    // After successful submission, update the expense list
-    updateExpenseList();
-});
+var expenses = []; // Array to store expense data for the chart
 
-function updateExpenseList() {
-    // Fetch expense data from the server and update the list
-    // For simplicity, I'm using dummy data here
-    const dummyData = [
-        { type: 'Travel', amount: 200.00, description: 'Business trip to XYZ', status: 'Pending' },
-        { type: 'Meals', amount: 50.00, description: 'Dinner with clients', status: 'Approved' },
-    ];
+        function submitExpense() {
+            var amount = document.getElementById('amount').value;
+            var receipt = document.getElementById('receipt').files[0];
 
-    const expenseList = document.getElementById('expenseList');
-    expenseList.innerHTML = ''; // Clear previous entries
+            if (amount.trim() === '' && !receipt) {
+                alert('Please enter either the amount or upload a receipt.');
+                return;
+            }
 
-    dummyData.forEach(expense => {
-        const li = document.createElement('li');
-        li.textContent = `${expense.type} - $${expense.amount.toFixed(2)} - ${expense.description} - Status: ${expense.status}`;
-        expenseList.appendChild(li);
-    });
-}
+            var formData = new FormData();
+            formData.append('amount', amount);
+            formData.append('receipt', receipt);
 
-// Initial update of the expense list
-updateExpenseList();
+            fetch('/submit_expense', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend
+                var adjustedAmount = parseFloat(data.adjustedAmount);
+                var totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
+                totalAmount += isNaN(adjustedAmount) ? 0 : adjustedAmount;
+                document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+
+                // Add the expense to the array for the chart
+                expenses.push(isNaN(adjustedAmount) ? 0 : adjustedAmount);
+
+                // Update the pie chart
+                updatePieChart();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function updatePieChart() {
+            var ctx = document.getElementById('pieChart').getContext('2d');
+            var data = {
+                labels: expenses.map((_, index) => 'Category ' + (index + 1)),
+                datasets: [{
+                    data: expenses,
+                    backgroundColor: getRandomColorArray(expenses.length),
+                }]
+            };
+
+            var options = {
+                responsive: true,
+            };
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: options
+            });
+        }
+
+        function getRandomColorArray(count) {
+            var colors = [];
+            for (var i = 0; i < count; i++) {
+                var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+                colors.push(randomColor);
+            }
+            return colors;
+        }
