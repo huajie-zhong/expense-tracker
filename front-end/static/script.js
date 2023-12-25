@@ -13,7 +13,7 @@ var expenses = []; // Array to store expense data for the chart
             formData.append('amount', amount);
             formData.append('receipt', receipt);
 
-            fetch('/submit_expense', {
+            fetch('/api/submit_expense', {
                 method: 'POST',
                 body: formData
             })
