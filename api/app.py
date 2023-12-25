@@ -10,7 +10,10 @@ def main_page():
 
 @app.route("/api/submit_expense", methods=['POST'])
 def submit_expense():
-    expense_data = request.get_json()
+    amount = request.form.get('amount')
+    receipt_file = request.files['receipt'] if 'receipt' in request.files else None
+
+    
     
 
 if __name__ == "__main__":
