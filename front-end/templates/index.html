@@ -7,7 +7,11 @@
     <title>Expense Reporting System</title>
 </head>
 <body>
-    <h2>Expense Report Form</h2>
+    <header>
+        <h1>Expense Tracker</h1>
+    </header>
+
+    <div class="container">
 
     <form id="expenseForm">
         <label for="expenseType">Expense Type:</label>
@@ -31,8 +35,12 @@
     </form>
 
     <!-- Display Expense Reports -->
+    </div>
+
+    <div id="report">
     <h2>Expense Reports</h2>
     <ul id="expenseList"></ul>
+    </div>
 
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
