@@ -37,6 +37,8 @@ class Purchase(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     amount = db.Column(db.Integer, nullable = False)
     date = db.Column(db.DateTime, nullable = False)
+    type = db.Column(db.String, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     items = db.relationship("Item", secondary = assoc_purchases_item, back_populates = "purchases")
 
     def __init__(self, **kwargs):
@@ -44,7 +46,10 @@ class Purchase(db.Model):
         Initialize a purchase object
         """
 
-        #TODO
+        self.amount = kwargs.get("amount", 0)
+        self.date = kwargs.get("date")
+        self.type = kwargs.get("type", "uncategorized")
+        self.user_id = kwargs.get("user_id", 1)
 
 
 class Item(db.Model):
