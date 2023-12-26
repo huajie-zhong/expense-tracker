@@ -12,6 +12,7 @@ var expenses = []; // Array to store expense data for the chart
             var formData = new FormData();
             formData.append('amount', amount);
             formData.append('receipt', receipt);
+            formData.append('type', expenseType.options[expenseType.selectedIndex].text);
 
             fetch('/api/submit_expense', {
                 method: 'POST',
@@ -37,7 +38,7 @@ var expenses = []; // Array to store expense data for the chart
         }
 
         function updatePieChart() {
-            var ctx = document.getElementById('pieChart').getContext('2d');
+            var ctx = document.getElementById('expenseChart').getContext('2d');
             var data = {
                 labels: expenses.map((_, index) => 'Category ' + (index + 1)),
                 datasets: [{
