@@ -14,6 +14,13 @@
     <div class="container">
 
         <form id="expenseForm" enctype="multipart/form-data">
+            <label for="expenseType">Expense Type:</label>
+            <select id="expenseType" name="expenseType">
+                <option value="travel">Travel</option>
+                <option value="accommodation">Accommodation</option>
+                <option value="meals">Meals</option>
+            <!-- Add more options as needed -->
+            </select>
             <label for="amount">Amount:</label>
             <input type="number" id="amount" name="amount" placeholder="Enter amount" required>
     
