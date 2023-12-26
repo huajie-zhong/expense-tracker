@@ -40,7 +40,9 @@ def submit_expense():
         purchase = Purchase(amount = amount, type = expense_type, date = datetime.datetime.now())
         db.session.add(purchase)
         db.session.commit()
-        return success_response({"adjustedAmount":amount})
+        return success_response({"adjustedAmount":amount,
+                                 "type":expense_type
+                                 })
     else:
         return failure_response("parameter not provided", 400)
 

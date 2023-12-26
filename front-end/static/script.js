@@ -1,4 +1,5 @@
-var expenses = []; // Array to store expense data for the chart
+var expenses = {}; // Dictionary to store expense data for the chart
+var categoryColors = {}; // Dictionary to store category colors
 
         function submitExpense() {
             var amount = document.getElementById('amount').value;
@@ -27,7 +28,8 @@ var expenses = []; // Array to store expense data for the chart
                 document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
                 // Add the expense to the array for the chart
-                expenses.push(isNaN(adjustedAmount) ? 0 : adjustedAmount);
+                var expenseKey = data.type;
+                expenses[expenseKey] = isNaN(expenses[expenseKey]) ? adjustedAmount : adjustedAmount + expenses[expenseKey];
 
                 // Update the pie chart
                 updatePieChart();
@@ -39,11 +41,29 @@ var expenses = []; // Array to store expense data for the chart
 
         function updatePieChart() {
             var ctx = document.getElementById('expenseChart').getContext('2d');
+
+            // Check if there's an existing chart instance with ID '0'
+            var existingChart = Chart.getChart(ctx);
+            if (existingChart) {
+            // If an existing chart is found, destroy it
+            existingChart.destroy();
+            }
+            
+            var categoryKeys = Object.keys(expenses);
+            var categoryData = Object.values(expenses);
+
+            // Ensure that category colors are initialized and consistent
+            for (var i = 0; i < categoryKeys.length; i++) {
+                if (!categoryColors[categoryKeys[i]]) {
+                    categoryColors[categoryKeys[i]] = getRandomColor();
+                }
+            }
+
             var data = {
-                labels: expenses.map((_, index) => 'Category ' + (index + 1)),
+                labels: categoryKeys,
                 datasets: [{
-                    data: expenses,
-                    backgroundColor: getRandomColorArray(expenses.length),
+                    data: categoryData,
+                    backgroundColor: categoryKeys.map(key => categoryColors[key]),
                 }]
             };
 
@@ -58,11 +78,6 @@ var expenses = []; // Array to store expense data for the chart
             });
         }
 
-        function getRandomColorArray(count) {
-            var colors = [];
-            for (var i = 0; i < count; i++) {
-                var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-                colors.push(randomColor);
-            }
-            return colors;
+        function getRandomColor() {
+            return '#' + Math.floor(Math.random() * 16777215).toString(16);
         }
