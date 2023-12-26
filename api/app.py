@@ -36,7 +36,6 @@ def submit_expense():
         expense_type = "uncategorized"
 
     if amount is not None:
-        #TODO handle type
         purchase = Purchase(amount = amount, type = expense_type, date = datetime.datetime.now())
         db.session.add(purchase)
         db.session.commit()
