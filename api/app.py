@@ -28,7 +28,7 @@ def main_page():
 
 @app.route("/api/submit_expense/", methods=['POST'])
 def submit_expense():
-    amount = request.form.get('amount')
+    amount = int(request.form.get('amount'))
     receipt_file = request.files['receipt'] if 'receipt' in request.files else None
     expense_type = request.form.get('type')
 
@@ -39,8 +39,7 @@ def submit_expense():
         purchase = Purchase(amount = amount, type = expense_type, date = datetime.datetime.now())
         db.session.add(purchase)
         db.session.commit()
-        print("created")
-        return success_response({amount:amount})
+        return success_response({"adjustedAmount":amount})
     else:
         return failure_response("parameter not provided", 400)
 
