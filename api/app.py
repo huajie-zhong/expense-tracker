@@ -81,7 +81,7 @@ def login_page():
     return render_template('login.html')
 
 
-#-----------------------------API routes------------------
+#-----------------------------API routes---------------------
 
 @app.route('/api/login', methods = ['POST'])
 def login():
