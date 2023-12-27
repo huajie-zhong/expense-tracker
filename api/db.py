@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -8,7 +9,7 @@ assoc_purchases_item = db.Table(
     db.Column("item_id", db.Integer, db.ForeignKey("item.id"))
 )
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """
     User model
     """
