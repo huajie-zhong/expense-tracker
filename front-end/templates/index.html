@@ -6,19 +6,14 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <title>Expense Reporting System</title>
 </head>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function(){
+      $("#header-container").load("{{ url_for('header')}}"); 
+    });
+</script>
 <body>
-    <header>
-        <a href="{{ url_for('main_page')}}" style="text-decoration: none; color: inherit"><div id="title"><h1>Expense Tracker</h1></div></a>
-        <div id="header-left">
-            <div id="currency-button" class="header-option">Currency</div>
-            <div id="settings-button" class="header-option">Settings</div>
-        </div>
-        
-        <div id="header-right">
-            <div id="login-button" class="header-option">Login</div>
-        </div>
-    </header>
-
+    <div id="header-container"></div>
     <div class="container">
 
         <form id="expenseForm" enctype="multipart/form-data">

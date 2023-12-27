@@ -1,7 +1,7 @@
 import json, datetime
 
 from db import db, Purchase, User, Item
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 
 app = Flask(__name__, template_folder= "../front-end/templates", static_folder="../front-end/static")
 db_filename = "expense_tracker.db"
@@ -25,6 +25,50 @@ def failure_response(message, code = 404):
 @app.route("/")
 def main_page():
     return render_template('index.html')
+
+@app.route('/currency/', methods=['GET', 'POST'])
+def currency():
+    if request.method == 'POST':
+        # do stuff when the form is submitted
+
+        # redirect to end the POST handling
+        # the redirect can be to the same route or somewhere else
+        return redirect(url_for('currency'))
+
+    return render_template('currency.html')
+
+@app.route('/header/', methods=['GET', 'POST'])
+def header():
+    if request.method == 'POST':
+        # do stuff when the form is submitted
+
+        # redirect to end the POST handling
+        # the redirect can be to the same route or somewhere else
+        return redirect(url_for('header'))
+
+    return render_template('header.html')
+
+@app.route('/settings/', methods=['GET', 'POST'])
+def settings():
+    if request.method == 'POST':
+        # do stuff when the form is submitted
+
+        # redirect to end the POST handling
+        # the redirect can be to the same route or somewhere else
+        return redirect(url_for('settings'))
+
+    return render_template('settings.html')
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # do stuff when the form is submitted
+
+        # redirect to end the POST handling
+        # the redirect can be to the same route or somewhere else
+        return redirect(url_for('login'))
+
+    return render_template('login.html')
 
 @app.route("/api/submit_expense/", methods=['POST'])
 def submit_expense():

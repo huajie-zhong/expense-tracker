@@ -117,6 +117,10 @@ li {
     padding: 20px;
 }
 
+.header-option{
+    transition: transform 0.2s ease-in-out;
+}
+
 .header-option:hover {
-    text-decoration: underline;
+    transform: translateY(-5px);
 }
