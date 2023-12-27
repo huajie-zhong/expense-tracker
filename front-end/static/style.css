@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto:300,400,500');
+
 body {
     height: auto !important;
     font-family: 'Arial', sans-serif;
@@ -7,7 +9,7 @@ body {
 }
 
 header {
-    position: sticky;
+    position: relative;
     top: 0;
     padding: 16px;
     height: 62px;
@@ -17,10 +19,14 @@ header {
     box-shadow: 0 2px 6px 0 rgba(34, 36, 38, 0.15),
       0 2px 18px 0 rgba(34, 36, 38, 0.17);
     color: #fff;
-    position:relative;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    
   }
 
 h1 {
+    font-size: 32px;
     margin: 0;
 }
 h2 {
@@ -83,6 +89,34 @@ li {
     margin:30px;
 }
 
+#title{
+    padding-top: 12px;
+    padding-left: 5px;
+    padding-right: 27px;
+    display: inline-block;
+}
+
+#header-left {
+    padding-top: 12px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 23px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#header-right {
+    display: flex;
+    margin-left: auto;
+    margin-right: 2%;
+    font-size: 23px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 .container{
     padding: 20px;
+}
+
+.header-option:hover {
+    text-decoration: underline;
 }

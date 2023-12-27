@@ -8,7 +8,15 @@
 </head>
 <body>
     <header>
-        <h1>Expense Tracker</h1>
+        <a href="{{ url_for('main_page')}}" style="text-decoration: none; color: inherit"><div id="title"><h1>Expense Tracker</h1></div></a>
+        <div id="header-left">
+            <div id="currency-button" class="header-option">Currency</div>
+            <div id="settings-button" class="header-option">Settings</div>
+        </div>
+        
+        <div id="header-right">
+            <div id="login-button" class="header-option">Login</div>
+        </div>
     </header>
 
     <div class="container">
