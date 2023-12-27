@@ -6,6 +6,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__, template_folder= "../front-end/templates", static_folder="../front-end/static")
@@ -42,6 +43,11 @@ def generate_tokens(user):
 
     return access_token, refresh_token
 
+def hash_password(password):
+    return generate_password_hash(password, method='sha256')
+
+def verify_password(hashed_password, password):
+    return check_password_hash(hashed_password, password)
 
 @login.user_loader
 def load_user(id):
@@ -140,6 +146,23 @@ def logout():
     response.set_cookie('access_token', expires=0, httponly=True, secure=True, samesite='Strict')
     response.set_cookie('refresh_token', expires=0, httponly=True, secure=True, samesite='Strict')
     return response
+
+@app.route('/api/register/', methods = ['POST'])
+def register():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    existing_user = User.query.filter_by(email=email).first()
+
+    if existing_user:
+        return jsonify({'message': 'User with this email already exists'}), 400
+    
+    new_user = User(email=email, password=hash_password(password))
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'Registration successful. You can now log in.'}), 201
+
 
 @app.route("/api/submit_expense/", methods=['POST'])
 def submit_expense():
