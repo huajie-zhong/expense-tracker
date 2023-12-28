@@ -1,12 +1,15 @@
 import os, secrets, json, jwt, requests
 
 from db import db, Purchase, User, Item
-from flask import Flask, request, render_template, redirect, url_for, current_app, flash, jsonify, make_response
+from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 
+
+load_dotenv()
 
 app = Flask(__name__, template_folder= "../front-end/templates", static_folder="../front-end/static")
 db_filename = "expense_tracker.db"
@@ -16,6 +19,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=15)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
+#app.secret_key = os.environ.get('SECRET_KEY')
 
 login = LoginManager(app)
 login.login_view = 'main_page'
@@ -42,6 +47,11 @@ def generate_tokens(user):
 
     return access_token, refresh_token
 
+def hash_password(password):
+    return generate_password_hash(password, method='sha256')
+
+def verify_password(hashed_password, password):
+    return check_password_hash(hashed_password, password)
 
 @login.user_loader
 def load_user(id):
@@ -83,14 +93,15 @@ def login_page():
 
 #-----------------------------API routes---------------------
 
-@app.route('/api/login', methods = ['POST'])
+@app.route('/api/login/', methods = ['POST'])
 def login():
-    email = request.form.get('email')
+    username = request.form.get('username')
     password = request.form.get('password')
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(username=username).first()
+    
 
-    if user and user.password == password:
+    if user and verify_password(user.password, password):
         login_user(user)
         access_token, refresh_token = generate_tokens(user)
 
@@ -103,9 +114,9 @@ def login():
 
         return response
     else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+        return jsonify({'error': 'Invalid credentials'}), 401
 
-@app.route('/api/refresh-token', methods=['POST'])
+@app.route('/api/refresh-token/', methods=['POST'])
 def refresh_token():
     data = request.get_json()
     refresh_token = data.get('refresh_token')
@@ -140,6 +151,22 @@ def logout():
     response.set_cookie('access_token', expires=0, httponly=True, secure=True, samesite='Strict')
     response.set_cookie('refresh_token', expires=0, httponly=True, secure=True, samesite='Strict')
     return response
+
+@app.route('/api/register/', methods = ['POST'])
+def register():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    existing_user = User.query.filter_by(username=username).first()
+
+    if existing_user:
+        return jsonify({'error': 'User with this email already exists'}), 400
+    
+    new_user = User(username=username, password=hash_password(password))
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'Registration successful. You can now log in.'}), 201
+
 
 @app.route("/api/submit_expense/", methods=['POST'])
 def submit_expense():
