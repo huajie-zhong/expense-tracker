@@ -20,7 +20,6 @@ app.config["SQLALCHEMY_ECHO"] = True
 app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=15)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
-#app.secret_key = os.environ.get('SECRET_KEY')
 
 login = LoginManager(app)
 login.login_view = 'main_page'
