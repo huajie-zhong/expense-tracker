@@ -124,3 +124,9 @@ li {
 .header-option:hover {
     transform: translateY(-5px);
 }
+
+.Error{
+    color:red;
+    font-style:oblique;
+    font-weight: bold;
+}
