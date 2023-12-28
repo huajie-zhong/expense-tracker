@@ -23,6 +23,7 @@
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
+            <span class="Error" id="loginError"></span>
             <p class="switch-form" id="showRegister">Don't have an account? <span id="registerButton" style="color: dodgerblue;">Register here</span></p>
             <button type="submit">Login</button>
         </form>
@@ -37,6 +38,7 @@
 
             <label for="newPassword">New Password:</label>
             <input type="password" id="newPassword" name="newPassword" required>
+            <span class="Error" id="registerError"></span>
             <p class="switch-form" id="showLogin" style="display: none;">Already have an account? <span id="loginButton" style="color: dodgerblue;">Login here</span></p>
             <button type="submit">Register</button>
         </form>
@@ -60,5 +62,6 @@
             document.getElementById('showRegister').style.display = 'block';
         });
     </script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 </html>
