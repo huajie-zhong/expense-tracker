@@ -89,7 +89,7 @@ def login_page():
 
 #-----------------------------API routes---------------------
 
-@app.route('/api/login', methods = ['POST'])
+@app.route('/api/login/', methods = ['POST'])
 def login():
     email = request.form.get('email')
     password = request.form.get('password')
@@ -111,7 +111,7 @@ def login():
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
 
-@app.route('/api/refresh-token', methods=['POST'])
+@app.route('/api/refresh-token/', methods=['POST'])
 def refresh_token():
     data = request.get_json()
     refresh_token = data.get('refresh_token')
