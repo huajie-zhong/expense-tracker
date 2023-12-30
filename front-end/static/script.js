@@ -2,6 +2,7 @@ var expenses = {}; // Dictionary to store expense data for the chart
 var categoryColors = {}; // Dictionary to store category colors
 
 function updateExpense() {
+    var totalAmount = 0;
   /* Fetch for current user's expense data from backend and update it to local storage and pie chart*/
   fetch("/api/get_expenses").then((response) => {
     if (!response.ok) {
@@ -19,10 +20,12 @@ function updateExpense() {
           expenses[expenseKey] = isNaN(expenses[expenseKey])
             ? purchases[i].amount
             : purchases[i].amount + expenses[expenseKey];
+          totalAmount += purchases[i].amount;
         }
       })
       .then(() => {
         updatePieChart();
+        document.getElementById("totalAmount").textContent = totalAmount.toFixed(2);
       });
   });
 }
