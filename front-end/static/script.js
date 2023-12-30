@@ -1,206 +1,217 @@
 var expenses = {}; // Dictionary to store expense data for the chart
 var categoryColors = {}; // Dictionary to store category colors
 
-
-
-        function updateExpense() {
-            /* Fetch for current user's expense data from backend and update it to local storage and pie chart*/
-            fetch('/api/get_expenses')
-            .then(response => {
-                if(!response.ok) {
-                    console.error('Error:', response.json().errorData.message);
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                response.json().then(data => {
-                // Handle the response from the backend
-                console.log('Success:', data);
-                purchases = data.purchases;
-                for (var i = 0; i < purchases.length; i++) {
-                    var expenseKey = purchases[i].type;
-                    expenses[expenseKey] = isNaN(expenses[expenseKey]) ? purchases[i].amount : purchases[i].amount + expenses[expenseKey];
-                }
-            }).then(() => {updatePieChart();});
-            })
+function updateExpense() {
+  /* Fetch for current user's expense data from backend and update it to local storage and pie chart*/
+  fetch("/api/get_expenses").then((response) => {
+    if (!response.ok) {
+      console.error("Error:", response.json().errorData.message);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    response
+      .json()
+      .then((data) => {
+        // Handle the response from the backend
+        console.log("Success:", data);
+        purchases = data.purchases;
+        for (var i = 0; i < purchases.length; i++) {
+          var expenseKey = purchases[i].type;
+          expenses[expenseKey] = isNaN(expenses[expenseKey])
+            ? purchases[i].amount
+            : purchases[i].amount + expenses[expenseKey];
         }
+      })
+      .then(() => {
+        updatePieChart();
+      });
+  });
+}
 
-        function submitExpense() {
-            var amount = document.getElementById('amount').value;
-            var receipt = document.getElementById('receipt').files[0];
+function submitExpense() {
+  var amount = document.getElementById("amount").value;
+  var receipt = document.getElementById("receipt").files[0];
 
-            if (amount.trim() === '' && !receipt) {
-                alert('Please enter either the amount or upload a receipt.');
-                return;
-            }
+  if (amount.trim() === "" && !receipt) {
+    alert("Please enter either the amount or upload a receipt.");
+    return;
+  }
 
-            var formData = new FormData();
-            formData.append('amount', amount);
-            formData.append('receipt', receipt);
-            formData.append('type', expenseType.options[expenseType.selectedIndex].text);
+  var formData = new FormData();
+  formData.append("amount", amount);
+  formData.append("receipt", receipt);
+  formData.append("type", expenseType.options[expenseType.selectedIndex].text);
 
-            fetch('/api/submit_expense/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    console.error('Error:', response.json().errorData.message);
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                response.json()
-                .then(data => {
-                // Handle the response from the backend
-                var adjustedAmount = parseFloat(data.adjustedAmount);
-                var totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
-                totalAmount += isNaN(adjustedAmount) ? 0 : adjustedAmount;
-                document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+  fetch("/api/submit_expense/", {
+    method: "POST",
+    body: formData,
+  }).then((response) => {
+    if (!response.ok) {
+      console.error("Error:", response.json().errorData.message);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    response.json().then((data) => {
+      // Handle the response from the backend
+      var adjustedAmount = parseFloat(data.adjustedAmount);
+      var totalAmount = parseFloat(
+        document.getElementById("totalAmount").textContent
+      );
+      totalAmount += isNaN(adjustedAmount) ? 0 : adjustedAmount;
+      document.getElementById("totalAmount").textContent =
+        totalAmount.toFixed(2);
 
-                // Add the expense to the dictionary for the chart
-                var expenseKey = data.type;
-                expenses[expenseKey] = isNaN(expenses[expenseKey]) ? adjustedAmount : adjustedAmount + expenses[expenseKey];
+      // Add the expense to the dictionary for the chart
+      var expenseKey = data.type;
+      expenses[expenseKey] = isNaN(expenses[expenseKey])
+        ? adjustedAmount
+        : adjustedAmount + expenses[expenseKey];
 
-                // Update the pie chart
-                updatePieChart();
-                });
-            })
-        }
+      // Update the pie chart
+      updatePieChart();
+    });
+  });
+}
 
-        function updatePieChart() {
-            var ctx = document.getElementById('expenseChart').getContext('2d');
+function updatePieChart() {
+  var ctx = document.getElementById("expenseChart").getContext("2d");
 
-            // Check if there's an existing chart instance with ID '0'
-            var existingChart = Chart.getChart(ctx);
-            if (existingChart) {
-            // If an existing chart is found, destroy it
-            existingChart.destroy();
-            }
-            
-            var categoryKeys = Object.keys(expenses);
-            var categoryData = Object.values(expenses);
+  // Check if there's an existing chart instance with ID '0'
+  var existingChart = Chart.getChart(ctx);
+  if (existingChart) {
+    // If an existing chart is found, destroy it
+    existingChart.destroy();
+  }
 
-            // Ensure that category colors are initialized and consistent
-            for (var i = 0; i < categoryKeys.length; i++) {
-                if (!categoryColors[categoryKeys[i]]) {
-                    categoryColors[categoryKeys[i]] = getRandomColor();
-                }
-            }
+  var categoryKeys = Object.keys(expenses);
+  var categoryData = Object.values(expenses);
 
-            var data = {
-                labels: categoryKeys,
-                datasets: [{
-                    data: categoryData,
-                    backgroundColor: categoryKeys.map(key => categoryColors[key]),
-                }]
-            };
+  // Ensure that category colors are initialized and consistent
+  for (var i = 0; i < categoryKeys.length; i++) {
+    if (!categoryColors[categoryKeys[i]]) {
+      categoryColors[categoryKeys[i]] = getRandomColor();
+    }
+  }
 
-            var options = {
-                responsive: false,
-            };
+  var data = {
+    labels: categoryKeys,
+    datasets: [
+      {
+        data: categoryData,
+        backgroundColor: categoryKeys.map((key) => categoryColors[key]),
+      },
+    ],
+  };
 
-            new Chart(ctx, {
-                type: 'pie',
-                data: data,
-                options: options
-            });
-        }
+  var options = {
+    responsive: false,
+  };
 
-        function getRandomColor() {
-            return '#' + Math.floor(Math.random() * 16777215).toString(16);
-        }
+  new Chart(ctx, {
+    type: "pie",
+    data: data,
+    options: options,
+  });
+}
 
-        function login(){
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
+function getRandomColor() {
+  return "#" + Math.floor(Math.random() * 16777215).toString(16);
+}
 
-            if (username.trim() === '' || password.trim() == '') {
-                alert('Please enter username and password');
-                return;
-            }
+function login() {
+  var username = document.getElementById("username").value;
+  var password = document.getElementById("password").value;
 
-            var formData = new FormData();
-            formData.append('username', username);
-            formData.append('password', password);
-            
-            fetch('/api/login/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        document.getElementById('loginError').innerHTML = "Username or Password is not correct";
-                    }
-                    console.error('Login failed:', response.json().errorData.message);
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                    }       
-                response.json()
-                .then(data => {document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
-                document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
-                updateExpense();
-                window.location.replace("/");
-                });
-            })
-        }
+  if (username.trim() === "" || password.trim() == "") {
+    alert("Please enter username and password");
+    return;
+  }
 
-        function register(){
-            var username = document.getElementById('newUsername').value;
-            var password = document.getElementById('newPassword').value;
+  var formData = new FormData();
+  formData.append("username", username);
+  formData.append("password", password);
 
-            if (username.trim() === '' || password.trim() == '') {
-                alert('Please enter username and password');
-                return;
-            }
+  fetch("/api/login/", {
+    method: "POST",
+    body: formData,
+  }).then((response) => {
+    if (!response.ok) {
+      if (response.status === 401) {
+        document.getElementById("loginError").innerHTML =
+          "Username or Password is not correct";
+      }
+      console.error("Login failed:", response.json().errorData.message);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    response.json().then((data) => {
+      document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
+      document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
+      updateExpense();
+      window.location.replace("/");
+    });
+  });
+}
 
-            var formData = new FormData();
-            formData.append('username', username);
-            formData.append('password', password);
-            
-            fetch('/api/register/', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        document.getElementById('registerError').innerHTML = "User already existed";
-                    }
-                    console.error('Login failed:', response.json().errorData.message);
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                console.log('Registration successful:', response.json().data);       
-                window.location.href = "/login";
-            })
-        }
+function register() {
+  var username = document.getElementById("newUsername").value;
+  var password = document.getElementById("newPassword").value;
 
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
-            login();
-        });
-        
-        document.getElementById('registerForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
-            register();
-        });
+  if (username.trim() === "" || password.trim() == "") {
+    alert("Please enter username and password");
+    return;
+  }
 
-        function logout(){
-            fetch('/api/logout/', {
-                method: 'POST',
-            })
-            .then(response => {
-                if (!response.ok) {
-                    console.error('Logout failed:', response.json().errorData.message);
-                    window.location.replace("/");
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                console.log('Logout successful:', response.json().data);
-                window.location.reload();
-                
-                response.json()
-                .then(data => {       
-                document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
-                document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
-                expenses = {};
-                categoryColors = {};
-                window.location.replace("/");
-                });
-            })
-        }
+  var formData = new FormData();
+  formData.append("username", username);
+  formData.append("password", password);
+
+  fetch("/api/register/", {
+    method: "POST",
+    body: formData,
+  }).then((response) => {
+    if (!response.ok) {
+      if (response.status === 400) {
+        document.getElementById("registerError").innerHTML =
+          "User already existed";
+      }
+      console.error("Login failed:", response.json().errorData.message);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    console.log("Registration successful:", response.json().data);
+    window.location.href = "/login";
+  });
+}
+
+document
+  .getElementById("loginForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission
+    login();
+  });
+
+document
+  .getElementById("registerForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission
+    register();
+  });
+
+function logout() {
+  fetch("/api/logout/", {
+    method: "POST",
+  }).then((response) => {
+    if (!response.ok) {
+      console.error("Logout failed:", response.json().errorData.message);
+      window.location.replace("/");
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    console.log("Logout successful:", response.json().data);
+    window.location.reload();
+
+    response.json().then((data) => {
+      document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
+      document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
+      expenses = {};
+      categoryColors = {};
+      window.location.replace("/");
+    });
+  });
+}
