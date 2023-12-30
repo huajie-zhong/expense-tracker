@@ -1,6 +1,9 @@
 var expenses = {}; // Dictionary to store expense data for the chart
 var categoryColors = {}; // Dictionary to store category colors
 
+
+// Expense methods
+
 function updateExpense() {
     var totalAmount = 0;
   /* Fetch for current user's expense data from backend and update it to local storage and pie chart*/
@@ -128,6 +131,10 @@ function stringToColor(str) {
   return color;
 }
 
+
+
+// Login and Registration methods
+
 function login() {
   var username = document.getElementById("username").value;
   var password = document.getElementById("password").value;
@@ -226,4 +233,34 @@ function logout() {
       window.location.replace("/");
     });
   });
+}
+
+
+// currency conversion methods
+
+function convertCurrency() {
+    var fromCurrencyAmount = document.getElementById("fromCurrencyAmount").value;
+    var fromCurrency = document.getElementById("fromCurrency").value;
+    var toCurrency = document.getElementById("toCurrency").value;
+    
+    if (fromCurrencyAmount.trim() === "" || fromCurrency.trim() == "" || toCurrency.trim() == "") {
+        alert("Please enter the amount and select the currencies");
+        return;
+    }
+
+    var url = new URL("/api/exchange/", window.location.origin);
+    url.searchParams.append("fromCurrencyAmount", fromCurrencyAmount);
+    url.searchParams.append("fromCurrency", fromCurrency);
+    url.searchParams.append("toCurrency", toCurrency);
+
+    fetch(url)
+    .then((response) => {
+        if (!response.ok) {
+            console.error("Error:", response.json().errorData.message);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        response.json().then((data) => {
+            document.getElementById("toCurrencyAmount").value = data.toCurrencyAmount;
+        });
+    });
 }
