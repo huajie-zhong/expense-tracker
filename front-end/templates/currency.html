@@ -3,9 +3,8 @@
 <body>
 <div class="container">
 <form>
-    <h1 style="margin-bottom: 35px">Currency exchange</h1>
-
-        <table>
+        <table id="currency-conversion">
+            <caption><h1 style="margin-bottom: 35px">Currency exchange</h1></caption>
             <tr>
                 <th>From Currency</th>
                 <th>Amount</th>
@@ -22,7 +21,7 @@
                     </select>
                 </td>
                 <td>
-                    <input type="number" id="amount" min="0">
+                    <input type="number" id="fromCurrencyAmount" min="0">
                 </td>
                 <td>
                     <select id="toCurrency">
@@ -32,12 +31,13 @@
                     </select>
                 </td>
                 <td>
-                    <input type="text" id="result" readonly>
+                    <input type="text" id="toCurrencyAmount" readonly>
                 </td>
             </tr>
         </table>
-        <button type="submit">Convert</button>
+        <button type="submit" onclick="convertCurrency()">Convert</button>
     </div>
     </form>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 {% endblock %}
