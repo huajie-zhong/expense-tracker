@@ -21,8 +21,9 @@ app.config['JWT_EXPIRATION_DELTA'] = timedelta(minutes=15)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 
-login = LoginManager(app)
-login.login_view = 'main_page'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'main_page'
 
 db.init_app(app)
 with app.app_context():
@@ -52,7 +53,7 @@ def hash_password(password):
 def verify_password(hashed_password, password):
     return check_password_hash(hashed_password, password)
 
-@login.user_loader
+@login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
@@ -208,17 +209,39 @@ def submit_expense():
         expense_type = "uncategorized"
 
     if amount is not None:
+        #If user is not logged in, don't store the purchase into the database and return the amount and type
+        if current_user.is_anonymous:
+            return success_response({"adjustedAmount":amount,
+                                     "type":expense_type
+                                     })
+        
+        #If user is logged in, store the purchase into the database and return the amount and type
         amount = int(request.form.get('amount')) # type: ignore
+        user = User.query.filter_by(id=current_user.id).first()
         purchase = Purchase(amount = amount, type = expense_type, date = datetime.now())
+        user.purchases.append(purchase)
         db.session.add(purchase)
+        db.session.add(user)
         db.session.commit()
         return success_response({"adjustedAmount":amount,
                                  "type":expense_type
                                  })
     else:
         return failure_response("parameter not provided", 400)
-
     
+@app.route("/api/get_expenses/", methods=['GET'])
+@login_required
+def get_expenses():
+    """
+    Returns all the expenses for the user
+    """
+    user = User.query.filter_by(id=current_user.id).first()
+    purchases = user.purchases
+    return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return jsonify({'error': 'Unauthorized'}), 401
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
