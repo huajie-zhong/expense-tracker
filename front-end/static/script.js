@@ -70,7 +70,7 @@ var categoryColors = {}; // Dictionary to store category colors
             };
 
             var options = {
-                responsive: true,
+                responsive: false,
             };
 
             new Chart(ctx, {
