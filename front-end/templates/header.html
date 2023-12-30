@@ -34,6 +34,13 @@
         >
           <div id="settings-button" class="header-option">Settings</div>
         </a>
+        
+        <a
+          href="{{ url_for('report_page')}}"
+          style="text-decoration: none; color: inherit"
+          >
+          <div id="report-button" class="header-option">Report</div>
+        </a>
       </div>
       {% if current_user.is_authenticated %}
       <div id="header-right">
