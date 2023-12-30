@@ -2,7 +2,7 @@ import os, secrets, json, jwt, requests
 
 from db import db, Purchase, User, Item
 from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
@@ -59,6 +59,7 @@ def load_user(id):
 #---------------------Render pages-------------------
 @app.route("/")
 def main_page():
+    # main page
     return render_template('index.html')
 
 @app.route('/currency/', methods=['GET', 'POST'])
@@ -94,6 +95,14 @@ def login_page():
 
 @app.route('/api/login/', methods = ['POST'])
 def login():
+    """
+    Get the username and password from the request body
+    Verify the user exists in the database
+    Verify the password is correct
+    Generate an access token and a refresh token
+    Set the access token and refresh token as cookies in the response
+    """
+
     username = request.form.get('username')
     password = request.form.get('password')
 
@@ -117,6 +126,11 @@ def login():
 
 @app.route('/api/refresh-token/', methods=['POST'])
 def refresh_token():
+    """
+    Refresh the access token
+    Given a refresh token in the request body, verify it and generate a new access token
+    Set the new access token as a cookie in the response
+    """
     data = request.get_json()
     refresh_token = data.get('refresh_token')
 
@@ -144,6 +158,10 @@ def refresh_token():
 @app.route('/api/logout/', methods = ['POST'])
 @login_required
 def logout():
+    """
+    Logout the user
+    Clear the access and refresh tokens by setting their expiration to the immediate time
+    """
     logout_user()
     response = make_response(jsonify({'message': 'Logout successful'}))
     # Clear the access and refresh tokens by setting their expiration to the past
@@ -153,6 +171,13 @@ def logout():
 
 @app.route('/api/register/', methods = ['POST'])
 def register():
+    """
+    Register a new user
+    Get the username and password from the request body
+    Verify the user does not already exist in the database
+    Hash the password
+    Create a new user object and add it to the database
+    """
     username = request.form.get('username')
     password = request.form.get('password')
 
@@ -169,6 +194,12 @@ def register():
 
 @app.route("/api/submit_expense/", methods=['POST'])
 def submit_expense():
+    """
+    Takes in a receipt or amount and returns the amount and type of expense
+    If amount is provided, it will be used with the highest piroity
+    If the receipt is provided, it will be given to the OCR method to extracted the amount #TODO
+    Records the expense in the database
+    """
     amount = request.form.get('amount')
     receipt_file = request.files['receipt'] if 'receipt' in request.files else None
     expense_type = request.form.get('type')
