@@ -87,7 +87,7 @@ function updatePieChart() {
   // Ensure that category colors are initialized and consistent
   for (var i = 0; i < categoryKeys.length; i++) {
     if (!categoryColors[categoryKeys[i]]) {
-      categoryColors[categoryKeys[i]] = getRandomColor();
+      categoryColors[categoryKeys[i]] = stringToColor(categoryKeys[i]);
     }
   }
 
@@ -112,8 +112,17 @@ function updatePieChart() {
   });
 }
 
-function getRandomColor() {
-  return "#" + Math.floor(Math.random() * 16777215).toString(16);
+function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let color = '#';
+    for (let i = 0; i < 3; i++) {
+        let value = (hash >> (i * 8)) & 0xFF;
+        color += ('00' + value.toString(16)).substr(-2);
+    }
+    return color;
 }
 
 function login() {
