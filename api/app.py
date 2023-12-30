@@ -108,6 +108,12 @@ def login_page():
 
     return render_template('login.html')
 
+@app.route('/report/', methods=['GET', 'POST'])
+def report_page():
+    if request.method == 'POST':
+        return redirect(url_for('report'))
+    return render_template('report.html')
+
 
 # -----------------------------API routes---------------------
 
