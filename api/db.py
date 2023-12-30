@@ -28,6 +28,8 @@ class User(UserMixin, db.Model):
         self.username = kwargs.get("username", "")
         self.password = kwargs.get("password", "")
 
+        #TODO add serialize
+
 class Purchase(db.Model):
     """
     Purchase model

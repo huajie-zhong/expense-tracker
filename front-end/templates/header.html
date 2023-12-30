@@ -22,13 +22,23 @@
                 <div id="settings-button" class="header-option">Settings</div>
             </a>
         </div>
-        
+        {% if current_user.is_authenticated %}
+        <div id="header-right">
+            <div id="username" class="header-option" style="transition:none; pointer-events: none;">{{ current_user.username }}</div>
+            <a href="#" onclick="logout()" style="text-decoration: none; color: inherit">
+                <div id="logout-button" class="header-option">Logout</div>
+            </a>
+        </div>
+        {% else %}
         <div id="header-right">
             <a href="{{ url_for('login_page')}}" style="text-decoration: none; color: inherit">
                 <div id="login-button" class="header-option">Login</div>
             </a>
         </div>
+        {% endif %}
 
     </header>
+    {% block content %}
+    {% endblock %}
 </body>
 </html>

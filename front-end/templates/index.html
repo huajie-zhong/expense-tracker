@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <title>Expense Reporting System</title>
-</head>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-    $(document).ready(function(){
-      $("#header-container").load("{{ url_for('header_page')}}"); 
-    });
-</script>
+{%extends "header.html"%}
+{%block content%}
 <body>
     <div id="header-container"></div>
     <div class="container">
@@ -47,4 +35,4 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
-</html>
+{%endblock%}
