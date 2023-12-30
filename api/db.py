@@ -9,16 +9,17 @@ assoc_purchases_item = db.Table(
     db.Column("item_id", db.Integer, db.ForeignKey("item.id"))
 )
 
+
 class User(UserMixin, db.Model):
     """
     User model
     """
 
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    username = db.Column(db.String, nullable = False)
-    password = db.Column(db.String, nullable = False)
-    purchases = db.relationship("Purchase", cascade = "delete")
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    purchases = db.relationship("Purchase", cascade="delete")
 
     def __init__(self, **kwargs):
         """
@@ -40,6 +41,7 @@ class User(UserMixin, db.Model):
             "purchases": [purchase.serialize() for purchase in self.purchases]
         }
 
+
 class Purchase(db.Model):
     """
     Purchase model
@@ -47,12 +49,13 @@ class Purchase(db.Model):
 
     __tablename__ = "purchase"
 
-    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    amount = db.Column(db.Integer, nullable = False)
-    date = db.Column(db.DateTime, nullable = False)
-    type = db.Column(db.String, nullable = False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    amount = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    type = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    items = db.relationship("Item", secondary = assoc_purchases_item, back_populates = "purchases")
+    items = db.relationship(
+        "Item", secondary=assoc_purchases_item, back_populates="purchases")
 
     def __init__(self, **kwargs):
         """
@@ -77,12 +80,12 @@ class Purchase(db.Model):
             "user_id": self.user_id,
             "items": [item.serialize() for item in self.items]
         }
-    
+
     def simple_serialize(self):
         """
         Serialize a purchase object without items
         """
-            
+
         return {
             "id": self.id,
             "amount": self.amount,
@@ -97,9 +100,10 @@ class Item(db.Model):
     """
 
     __tablename__ = "item"
-    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    name = db.Column(db.String, nullable = False)
-    purchases = db.relationship("Purchase", secondary = assoc_purchases_item, back_populates = "items")
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, nullable=False)
+    purchases = db.relationship(
+        "Purchase", secondary=assoc_purchases_item, back_populates="items")
 
     def __init__(self, **kwargs):
         """
