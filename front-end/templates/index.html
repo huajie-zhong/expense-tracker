@@ -37,8 +37,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{url_for('static', filename='script.js')}}"></script>
+  {% if current_user.is_authenticated %}
   <script>
     $(document).ready(updateExpense());
   </script>
+  {% endif %}
 </body>
 {%endblock%}
