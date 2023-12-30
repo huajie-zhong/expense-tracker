@@ -155,3 +155,20 @@ var categoryColors = {}; // Dictionary to store category colors
             event.preventDefault(); // Prevent the default form submission
             register();
         });
+
+        function logout(){
+            fetch('/api/logout/', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Logout failed:', response.json().errorData.message);
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                console.log('Logout successful:', response.json().data);
+                var data = response.json();       
+                document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
+                document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
+                window.location.replace("/");
+            })
+        }
