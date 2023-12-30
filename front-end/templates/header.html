@@ -24,7 +24,7 @@
         </div>
         {% if current_user.is_authenticated %}
         <div id="header-right">
-            <div id="username" class="header-option">{{ current_user.username }}</div>
+            <div id="username" class="header-option" style="transition:none; pointer-events: none;">{{ current_user.username }}</div>
             <a href="#" onclick="logout()" style="text-decoration: none; color: inherit">
                 <div id="logout-button" class="header-option">Logout</div>
             </a>
