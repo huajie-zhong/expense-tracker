@@ -9,8 +9,16 @@
         <option value="travel">Travel</option>
         <option value="accommodation">Accommodation</option>
         <option value="meals">Meals</option>
+        <option value="more options">More Options</option>
         <!-- Add more options as needed -->
       </select>
+
+      <div id="newOption">
+      <label for="newOption">New Option:</label>
+      <input type="text" id="newOptionValue" placeholder="Enter new option">
+      <button type="button" id="addOptionButton" onclick="addOption()">Add Option</button>
+      </div>
+
       <label for="amount">Amount:</label>
       <input
         type="number"
@@ -42,5 +50,48 @@
     $(document).ready(updateExpense());
   </script>
   {% endif %}
+  <script>
+
+    // TODO debug
+    // Get the select element
+    var select = document.getElementById("expenseType");
+
+    // Function to add an option
+    function addOption() {
+      // Get the input value
+      var option = document.getElementById("newOptionValue").value;
+
+      if (option === "") {
+        alert("Please enter a value");
+        return;
+      }
+
+      // Create new option element
+      var opt = document.createElement("option");
+      opt.value = option;
+      opt.innerHTML = option;
+
+      // Add the option to the select
+      select.appendChild(opt);
+
+      // Clear the input field
+      document.getElementById("newOptionValue").value = "";
+    }
+
+    // Attach the function to a button
+    document.getElementById("addOptionButton").addEventListener("click", addOption);
+
+    // Hide the input fields and button initially
+    document.getElementById("newOption").style.display = "none";
+
+    // Show the input fields and button when "more options" is selected
+    select.addEventListener("change", function() {
+      if (this.value === "more options") {
+        document.getElementById("newOption").style.display = "block";
+      } else {
+        document.getElementById("newOption").style.display = "none";
+      }
+    });  
+    </script>
 </body>
 {%endblock%}
