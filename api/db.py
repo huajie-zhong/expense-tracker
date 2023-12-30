@@ -28,7 +28,17 @@ class User(UserMixin, db.Model):
         self.username = kwargs.get("username", "")
         self.password = kwargs.get("password", "")
 
-        #TODO add serialize
+    def serialize(self):
+        """
+        Serialize a user object
+        """
+
+        return {
+            "id": self.id,
+            "username": self.username,
+            "password": self.password,
+            "purchases": [purchase.serialize() for purchase in self.purchases]
+        }
 
 class Purchase(db.Model):
     """
@@ -54,6 +64,32 @@ class Purchase(db.Model):
         self.type = kwargs.get("type", "uncategorized")
         self.user_id = kwargs.get("user_id", 1)
 
+    def serialize(self):
+        """
+        Serialize a purchase object
+        """
+
+        return {
+            "id": self.id,
+            "amount": self.amount,
+            "date": self.date,
+            "type": self.type,
+            "user_id": self.user_id,
+            "items": [item.serialize() for item in self.items]
+        }
+    
+    def simple_serialize(self):
+        """
+        Serialize a purchase object without items
+        """
+            
+        return {
+            "id": self.id,
+            "amount": self.amount,
+            "date": self.date,
+            "type": self.type,
+        }
+
 
 class Item(db.Model):
     """
@@ -64,3 +100,21 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     name = db.Column(db.String, nullable = False)
     purchases = db.relationship("Purchase", secondary = assoc_purchases_item, back_populates = "items")
+
+    def __init__(self, **kwargs):
+        """
+        Initialize an item object
+        """
+
+        self.name = kwargs.get("name", "")
+
+    def serialize(self):
+        """
+        Serialize an item object
+        """
+
+        return {
+            "id": self.id,
+            "name": self.name,
+            "purchases": [purchase.simple_serialize() for purchase in self.purchases]
+        }
