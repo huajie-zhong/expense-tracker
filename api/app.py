@@ -1,4 +1,8 @@
-import os, secrets, json, jwt, requests
+import os
+import secrets
+import json
+import jwt
+import requests
 
 from db import db, Purchase, User, Item
 from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response
@@ -11,7 +15,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 
-app = Flask(__name__, template_folder= "../front-end/templates", static_folder="../front-end/static")
+app = Flask(__name__, template_folder="../front-end/templates",
+            static_folder="../front-end/static")
 db_filename = "expense_tracker.db"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///%s" % db_filename
@@ -30,38 +35,49 @@ with app.app_context():
     db.create_all()
 
 
-def success_response(body, code = 200):
+def success_response(body, code=200):
     return jsonify(body), code
 
-def failure_response(message, code = 404):
+
+def failure_response(message, code=404):
     return jsonify({"error": message}), code
+
 
 def generate_tokens(user):
     # Generate access token
-    access_token_payload = {'user_id': user.id, 'exp': datetime.utcnow() + app.config['JWT_EXPIRATION_DELTA']}
-    access_token = jwt.encode(access_token_payload, app.config['SECRET_KEY'], algorithm='HS256')
+    access_token_payload = {'user_id': user.id, 'exp': datetime.utcnow(
+    ) + app.config['JWT_EXPIRATION_DELTA']}
+    access_token = jwt.encode(access_token_payload,
+                              app.config['SECRET_KEY'], algorithm='HS256')
 
     # Generate refresh token
     refresh_token_payload = {'user_id': user.id}
-    refresh_token = jwt.encode(refresh_token_payload, app.config['SECRET_KEY'], algorithm='HS256')
+    refresh_token = jwt.encode(
+        refresh_token_payload, app.config['SECRET_KEY'], algorithm='HS256')
 
     return access_token, refresh_token
+
 
 def hash_password(password):
     return generate_password_hash(password, method='sha256')
 
+
 def verify_password(hashed_password, password):
     return check_password_hash(hashed_password, password)
+
 
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
-#---------------------Render pages-------------------
+# ---------------------Render pages-------------------
+
+
 @app.route("/")
 def main_page():
     # main page
     return render_template('index.html')
+
 
 @app.route('/currency/', methods=['GET', 'POST'])
 def currency_page():
@@ -70,6 +86,7 @@ def currency_page():
 
     return render_template('currency.html')
 
+
 @app.route('/header/', methods=['GET', 'POST'])
 def header_page():
     if request.method == 'POST':
@@ -77,12 +94,14 @@ def header_page():
 
     return render_template('header.html')
 
+
 @app.route('/settings/', methods=['GET', 'POST'])
 def settings_page():
     if request.method == 'POST':
         return redirect(url_for('settings'))
 
     return render_template('settings.html')
+
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login_page():
@@ -92,9 +111,9 @@ def login_page():
     return render_template('login.html')
 
 
-#-----------------------------API routes---------------------
+# -----------------------------API routes---------------------
 
-@app.route('/api/login/', methods = ['POST'])
+@app.route('/api/login/', methods=['POST'])
 def login():
     """
     Get the username and password from the request body
@@ -108,22 +127,28 @@ def login():
     password = request.form.get('password')
 
     user = User.query.filter_by(username=username).first()
-    
 
     if user and verify_password(user.password, password):
         login_user(user)
+
+        # Just realized, with flask-login, we don't need to generate tokens and store them as cookies
+        # Below is optional and has no practical use in our app
+        # Tokens in cookie is not being verify when the user makes a request to the server
         access_token, refresh_token = generate_tokens(user)
 
         # Set the access token in an HTTP-only cookie
         response = make_response(jsonify({'message': 'Login successful'}))
-        response.set_cookie('access_token', access_token, httponly=True, secure=True, samesite='Strict')
+        response.set_cookie('access_token', access_token,
+                            httponly=True, secure=True, samesite='Strict')
 
         # Set the refresh token in an HTTP-only cookie
-        response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True, samesite='Strict')
+        response.set_cookie('refresh_token', refresh_token,
+                            httponly=True, secure=True, samesite='Strict')
 
         return response
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
+
 
 @app.route('/api/refresh-token/', methods=['POST'])
 def refresh_token():
@@ -136,7 +161,8 @@ def refresh_token():
     refresh_token = data.get('refresh_token')
 
     try:
-        payload = jwt.decode(refresh_token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        payload = jwt.decode(
+            refresh_token, app.config['SECRET_KEY'], algorithms=['HS256'])
         user = User.query.get(payload['user_id'])
 
         if user:
@@ -144,10 +170,12 @@ def refresh_token():
 
             # Set the new access token in an HTTP-only cookie
             response = make_response(jsonify({'message': 'Token refreshed'}))
-            response.set_cookie('access_token', access_token, httponly=True, secure=True, samesite='Strict')
+            response.set_cookie('access_token', access_token,
+                                httponly=True, secure=True, samesite='Strict')
 
             # Set the new refresh token in an HTTP-only cookie
-            response.set_cookie('refresh_token', new_refresh_token, httponly=True, secure=True, samesite='Strict')
+            response.set_cookie('refresh_token', new_refresh_token,
+                                httponly=True, secure=True, samesite='Strict')
 
             return response
 
@@ -156,7 +184,8 @@ def refresh_token():
     except jwt.InvalidTokenError:
         return jsonify({'message': 'Invalid refresh token'}), 401
 
-@app.route('/api/logout/', methods = ['POST'])
+
+@app.route('/api/logout/', methods=['POST'])
 @login_required
 def logout():
     """
@@ -166,11 +195,14 @@ def logout():
     logout_user()
     response = make_response(jsonify({'message': 'Logout successful'}))
     # Clear the access and refresh tokens by setting their expiration to the past
-    response.set_cookie('access_token', expires=0, httponly=True, secure=True, samesite='Strict')
-    response.set_cookie('refresh_token', expires=0, httponly=True, secure=True, samesite='Strict')
+    response.set_cookie('access_token', expires=0,
+                        httponly=True, secure=True, samesite='Strict')
+    response.set_cookie('refresh_token', expires=0,
+                        httponly=True, secure=True, samesite='Strict')
     return response
 
-@app.route('/api/register/', methods = ['POST'])
+
+@app.route('/api/register/', methods=['POST'])
 def register():
     """
     Register a new user
@@ -186,7 +218,7 @@ def register():
 
     if existing_user:
         return jsonify({'error': 'User with this email already exists'}), 400
-    
+
     new_user = User(username=username, password=hash_password(password))
     db.session.add(new_user)
     db.session.commit()
@@ -209,26 +241,28 @@ def submit_expense():
         expense_type = "uncategorized"
 
     if amount is not None:
-        #If user is not logged in, don't store the purchase into the database and return the amount and type
+        # If user is not logged in, don't store the purchase into the database and return the amount and type
         if current_user.is_anonymous:
-            return success_response({"adjustedAmount":amount,
-                                     "type":expense_type
+            return success_response({"adjustedAmount": amount,
+                                     "type": expense_type
                                      })
-        
-        #If user is logged in, store the purchase into the database and return the amount and type
-        amount = int(request.form.get('amount')) # type: ignore
+
+        # If user is logged in, store the purchase into the database and return the amount and type
+        amount = int(request.form.get('amount'))  # type: ignore
         user = User.query.filter_by(id=current_user.id).first()
-        purchase = Purchase(amount = amount, type = expense_type, date = datetime.now())
+        purchase = Purchase(
+            amount=amount, type=expense_type, date=datetime.now())
         user.purchases.append(purchase)
         db.session.add(purchase)
         db.session.add(user)
         db.session.commit()
-        return success_response({"adjustedAmount":amount,
-                                 "type":expense_type
+        return success_response({"adjustedAmount": amount,
+                                 "type": expense_type
                                  })
     else:
         return failure_response("parameter not provided", 400)
-    
+
+
 @app.route("/api/get_expenses/", methods=['GET'])
 @login_required
 def get_expenses():
@@ -239,9 +273,11 @@ def get_expenses():
     purchases = user.purchases
     return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
 
+
 @login_manager.unauthorized_handler
 def unauthorized():
     return jsonify({'error': 'Unauthorized'}), 401
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
