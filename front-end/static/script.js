@@ -3,6 +3,26 @@ var categoryColors = {}; // Dictionary to store category colors
 
 
 
+        function updateExpense() {
+            /* Fetch for current user's expense data from backend and update it to local storage and pie chart*/
+            fetch('/api/get_expenses')
+            .then(response => {
+                if(!response.ok) {
+                    console.error('Error:', response.json().errorData.message);
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                response.json().then(data => {
+                // Handle the response from the backend
+                console.log('Success:', data);
+                purchases = data.purchases;
+                for (var i = 0; i < purchases.length; i++) {
+                    var expenseKey = purchases[i].type;
+                    expenses[expenseKey] = isNaN(expenses[expenseKey]) ? purchases[i].amount : purchases[i].amount + expenses[expenseKey];
+                }
+            }).then(() => {updatePieChart();});
+            })
+        }
+
         function submitExpense() {
             var amount = document.getElementById('amount').value;
             var receipt = document.getElementById('receipt').files[0];
@@ -17,28 +37,31 @@ var categoryColors = {}; // Dictionary to store category colors
             formData.append('receipt', receipt);
             formData.append('type', expenseType.options[expenseType.selectedIndex].text);
 
-            fetch('/api/submit_expense', {
+            fetch('/api/submit_expense/', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Error:', response.json().errorData.message);
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                response.json()
+                .then(data => {
                 // Handle the response from the backend
                 var adjustedAmount = parseFloat(data.adjustedAmount);
                 var totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
                 totalAmount += isNaN(adjustedAmount) ? 0 : adjustedAmount;
                 document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 
-                // Add the expense to the array for the chart
+                // Add the expense to the dictionary for the chart
                 var expenseKey = data.type;
                 expenses[expenseKey] = isNaN(expenses[expenseKey]) ? adjustedAmount : adjustedAmount + expenses[expenseKey];
 
                 // Update the pie chart
                 updatePieChart();
+                });
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
         }
 
         function updatePieChart() {
@@ -109,10 +132,12 @@ var categoryColors = {}; // Dictionary to store category colors
                     console.error('Login failed:', response.json().errorData.message);
                     throw new Error(`HTTP error! Status: ${response.status}`);
                     }       
-                var data = response.json();
-                document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
+                response.json()
+                .then(data => {document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
                 document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
+                updateExpense();
                 window.location.replace("/");
+                });
             })
         }
 
@@ -163,12 +188,19 @@ var categoryColors = {}; // Dictionary to store category colors
             .then(response => {
                 if (!response.ok) {
                     console.error('Logout failed:', response.json().errorData.message);
+                    window.location.replace("/");
                     throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                 console.log('Logout successful:', response.json().data);
-                var data = response.json();       
+                window.location.reload();
+                
+                response.json()
+                .then(data => {       
                 document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
                 document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
+                expenses = {};
+                categoryColors = {};
                 window.location.replace("/");
+                });
             })
         }
