@@ -1,3 +1,43 @@
 {% extends "header.html" %}
 {% block content %}
+<body>
+<div class="container">
+<form>
+        <table id="currency-conversion">
+            <caption><h1 style="margin-bottom: 35px">Currency exchange</h1></caption>
+            <tr>
+                <th>From Currency</th>
+                <th>Amount</th>
+                <th>To Currency</th>
+                <th>Result</th>
+            </tr>
+            <tr>
+                <td>
+                    <select id="fromCurrency">
+                        <!-- options for each currency-->
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        
+                    </select>
+                </td>
+                <td>
+                    <input type="number" id="fromCurrencyAmount" min="0">
+                </td>
+                <td>
+                    <select id="toCurrency">
+                        <!--options for each currency-->
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" id="toCurrencyAmount" readonly>
+                </td>
+            </tr>
+        </table>
+        <button type="submit" onclick="convertCurrency()">Convert</button>
+    </div>
+    </form>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+</body>
 {% endblock %}

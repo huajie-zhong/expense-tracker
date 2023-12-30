@@ -1,55 +1,58 @@
-{% extends "header.html" %}
-{% block content %}
+{% extends "header.html" %} {% block content %}
 <body>
-    <div id="header-container"></div>
-    <div class="container">
-        
-        <form id="loginForm">
-            <h1 style="margin-bottom: 10px;">Login</h1>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+  <div class="container">
+    <form id="loginForm">
+      <h1 style="margin-bottom: 10px">Login</h1>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <span class="Error" id="loginError"></span>
-            <p class="switch-form" id="showRegister">Don't have an account? <span id="registerButton" style="color: dodgerblue;">Register here</span></p>
-            <button type="submit">Login</button>
-        </form>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+      <span class="Error" id="loginError"></span>
+      <p class="switch-form" id="showRegister">
+        Don't have an account?
+        <span id="registerButton" style="color: dodgerblue">Register here</span>
+      </p>
+      <button type="submit">Login</button>
+    </form>
 
-        
+    <!-- Registration form initially hidden -->
+    <form id="registerForm" style="display: none">
+      <h1 style="margin-bottom: 10px">Register</h1>
+      <label for="newUsername">New Username:</label>
+      <input type="text" id="newUsername" name="newUsername" required />
 
-        <!-- Registration form initially hidden -->
-        <form id="registerForm" style="display: none;">
-            <h1 style="margin-bottom: 10px;">Register</h1>
-            <label for="newUsername">New Username:</label>
-            <input type="text" id="newUsername" name="newUsername" required>
+      <label for="newPassword">New Password:</label>
+      <input type="password" id="newPassword" name="newPassword" required />
+      <span class="Error" id="registerError"></span>
+      <p class="switch-form" id="showLogin" style="display: none">
+        Already have an account?
+        <span id="loginButton" style="color: dodgerblue">Login here</span>
+      </p>
+      <button type="submit">Register</button>
+    </form>
+  </div>
 
-            <label for="newPassword">New Password:</label>
-            <input type="password" id="newPassword" name="newPassword" required>
-            <span class="Error" id="registerError"></span>
-            <p class="switch-form" id="showLogin" style="display: none;">Already have an account? <span id="loginButton" style="color: dodgerblue;">Login here</span></p>
-            <button type="submit">Register</button>
-        </form>
-        
-        
-    </div>
+  <script>
+    // JavaScript to toggle between login and registration forms
+    document
+      .getElementById("registerButton")
+      .addEventListener("click", function () {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "block";
+        document.getElementById("showLogin").style.display = "block";
+        document.getElementById("showRegister").style.display = "none";
+      });
 
-    <script>
-        // JavaScript to toggle between login and registration forms
-        document.getElementById('registerButton').addEventListener('click', function() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-            document.getElementById('showLogin').style.display = 'block';
-            document.getElementById('showRegister').style.display = 'none';
-        });
-
-        document.getElementById('loginButton').addEventListener('click', function() {
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('showLogin').style.display = 'none';
-            document.getElementById('showRegister').style.display = 'block';
-        });
-    </script>
-    <script src="{{url_for('static', filename='script.js')}}"></script>
+    document
+      .getElementById("loginButton")
+      .addEventListener("click", function () {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("showLogin").style.display = "none";
+        document.getElementById("showRegister").style.display = "block";
+      });
+  </script>
+  <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 {% endblock %}

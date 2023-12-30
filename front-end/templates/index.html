@@ -1,38 +1,46 @@
-{%extends "header.html"%}
-{%block content%}
+{%extends "header.html"%} {%block content%}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <body>
-    <div id="header-container"></div>
-    <div class="container">
+  <div id="header-container"></div>
+  <div class="container">
+    <form id="expenseForm" enctype="multipart/form-data">
+      <label for="expenseType">Expense Type:</label>
+      <select id="expenseType" name="expenseType">
+        <option value="travel">Travel</option>
+        <option value="accommodation">Accommodation</option>
+        <option value="meals">Meals</option>
+        <!-- Add more options as needed -->
+      </select>
+      <label for="amount">Amount:</label>
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        placeholder="Enter amount"
+        required
+      />
 
-        <form id="expenseForm" enctype="multipart/form-data">
-            <label for="expenseType">Expense Type:</label>
-            <select id="expenseType" name="expenseType">
-                <option value="travel">Travel</option>
-                <option value="accommodation">Accommodation</option>
-                <option value="meals">Meals</option>
-            <!-- Add more options as needed -->
-            </select>
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" placeholder="Enter amount" required>
-    
-            <label for="receipt">Upload Receipt:</label>
-            <input type="file" id="receipt" name="receipt">
-    
-            <button type="button" onclick="submitExpense()">Submit</button>
-        </form>
+      <label for="receipt">Upload Receipt:</label>
+      <input type="file" id="receipt" name="receipt" />
 
-    
-    </div>
-    <!-- Display Expense Reports -->
-    <div id="report">
-        <h3>Total Amount:</h3>
-        <p id="totalAmount">0</p>
+      <button type="button" onclick="submitExpense()">Submit</button>
+    </form>
+  </div>
+  <!-- Display Expense Reports -->
+  <div id="report">
+    <h3>Total Amount:</h3>
+    <p id="totalAmount">0</p>
 
-        <h3>Expense Categories:</h3>
-        <canvas id="expenseChart" width="400" height="400"></canvas>
-    </div>
+    <h3>Expense Categories:</h3>
+    <canvas id="expenseChart" width="400" height="400"></canvas>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{url_for('static', filename='script.js')}}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{url_for('static', filename='script.js')}}"></script>
+  {% if current_user.is_authenticated %}
+  <script>
+    $(document).ready(updateExpense());
+  </script>
+  {% endif %}
 </body>
 {%endblock%}
