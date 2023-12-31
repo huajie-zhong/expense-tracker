@@ -119,6 +119,23 @@ li {
     margin-left: auto;
     margin-right: auto;
 }
+
+#registerButton{
+    color: dodgerblue;
+}
+
+#registerButton:hover {
+    color: #0048AA;
+}
+
+#loginButton{
+    color: dodgerblue;
+}
+
+#loginButton:hover {
+    color: #0048AA;
+}
+
 .container{
     padding: 20px;
 }
