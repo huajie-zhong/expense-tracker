@@ -37,6 +37,15 @@ function submitExpense() {
   var amount = document.getElementById("amount").value;
   var receipt = document.getElementById("receipt").files[0];
 
+  var type = expenseType.options[expenseType.selectedIndex].text;
+
+  if (type === "More Options") {
+    var newOptionValue = document.getElementById("newOptionValue").value;
+    type = newOptionValue.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+      return letter.toUpperCase();
+  });
+  }
+
   if (amount.trim() === "" && !receipt) {
     alert("Please enter either the amount or upload a receipt.");
     return;
@@ -45,7 +54,7 @@ function submitExpense() {
   var formData = new FormData();
   formData.append("amount", amount);
   formData.append("receipt", receipt);
-  formData.append("type", expenseType.options[expenseType.selectedIndex].text);
+  formData.append("type", type);
 
   fetch("/api/submit_expense/", {
     method: "POST",
