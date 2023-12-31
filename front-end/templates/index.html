@@ -13,11 +13,11 @@
         <!-- Add more options as needed -->
       </select>
 
-      <div id="newOption">
+      <div id="newOption" style="display: none;">
       <label for="newOption">New Option:</label>
       <input type="text" id="newOptionValue" placeholder="Enter new option">
       </div>
-      
+
       <label for="amount">Amount:</label>
       <input
         type="number"
@@ -52,9 +52,6 @@
   <script>
     // Get the select element
     var select = document.getElementById("expenseType");
-
-    // Hide the input fields and button initially
-    document.getElementById("newOption").style.display = "none";
 
     // Show the input fields and button when "more options" is selected
     select.addEventListener("change", function() {
