@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+from receipt import get_total_amount
+from PIL import Image
 
 
 load_dotenv()
