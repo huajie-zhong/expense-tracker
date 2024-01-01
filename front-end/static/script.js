@@ -46,13 +46,19 @@ function submitExpense() {
   });
   }
 
-  if (amount.trim() === "" && !receipt) {
+  var formData = new FormData();
+
+  if (amount.trim() !== ""){
+    formData.append("amount", amount);
+  }
+  else if (receipt){
+    formData.append("receipt", receipt);
+  }
+  else{
     alert("Please enter either the amount or upload a receipt.");
     return;
   }
 
-  var formData = new FormData();
-  formData.append("amount", amount);
   formData.append("receipt", receipt);
   formData.append("type", type);
 
