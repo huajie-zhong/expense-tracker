@@ -254,7 +254,7 @@ def submit_expense():
     if expense_type is None:
         expense_type = "uncategorized"
 
-    if amount is not None:
+    if amount is not None and amount.strip() != "":
         # If user is not logged in, don't store the purchase into the database and return the amount and type
         if current_user.is_anonymous:
             return success_response({"adjustedAmount": amount,
