@@ -136,6 +136,17 @@ li {
     color: #0048AA;
 }
 
+#message{
+  background-color: #cff4fc;
+  border-color: #b6effb;
+  color: #055160;
+  margin: 0 auto;
+  max-width: 700px;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
 .container{
     padding: 20px;
 }
