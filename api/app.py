@@ -4,12 +4,14 @@ import requests
 import secrets
 
 from db import db, Purchase, User, Item
-from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response, session, abort
+from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response, session, abort, flash
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+from receipt import get_total_amount
+from PIL import Image
 
 
 load_dotenv()
@@ -122,12 +124,6 @@ def login_page():
 
     return render_template('login.html')
 
-@app.route('/report/', methods=['GET', 'POST'])
-def report_page():
-    if request.method == 'POST':
-        return redirect(url_for('report'))
-    return render_template('report.html')
-
 
 # -----------------------------API routes---------------------
 
@@ -162,7 +158,8 @@ def login():
         # Set the refresh token in an HTTP-only cookie
         response.set_cookie('refresh_token', refresh_token,
                             httponly=True, secure=True, samesite='Strict')
-
+        
+        flash('Welcome, ' + username + '!')
         return response
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
@@ -217,6 +214,7 @@ def logout():
                         httponly=True, secure=True, samesite='Strict')
     response.set_cookie('refresh_token', expires=0,
                         httponly=True, secure=True, samesite='Strict')
+    flash('You have been logged out.')
     return response
 
 
@@ -258,7 +256,7 @@ def submit_expense():
     if expense_type is None:
         expense_type = "uncategorized"
 
-    if amount is not None:
+    if amount is not None and amount.strip() != "":
         # If user is not logged in, don't store the purchase into the database and return the amount and type
         if current_user.is_anonymous:
             return success_response({"adjustedAmount": amount,
@@ -267,6 +265,30 @@ def submit_expense():
 
         # If user is logged in, store the purchase into the database and return the amount and type
         amount = int(request.form.get('amount'))  # type: ignore
+        user = User.query.filter_by(id=current_user.id).first()
+        purchase = Purchase(
+            amount=amount, type=expense_type, date=datetime.now())
+        user.purchases.append(purchase)
+        db.session.add(purchase)
+        db.session.add(user)
+        db.session.commit()
+        return success_response({"adjustedAmount": amount,
+                                 "type": expense_type
+                                 })
+    elif receipt_file is not None:
+        # If user is not logged in, don't store the purchase into the database and return the amount and type
+        receipt = Image.open(receipt_file)
+        amount = get_total_amount(receipt)
+        if amount is None:
+            return failure_response("total not found", 400)
+        
+        if current_user.is_anonymous:
+            return success_response({"adjustedAmount": amount,
+                                     "type": expense_type
+                                     })
+
+        # If user is logged in, store the purchase into the database and return the amount and type
+        amount = get_total_amount(receipt_file)
         user = User.query.filter_by(id=current_user.id).first()
         purchase = Purchase(
             amount=amount, type=expense_type, date=datetime.now())
@@ -365,6 +387,7 @@ def oauth2_callback(provider):
         db.session.commit()
     
     login_user(user)
+    flash('Welcome, ' + username + '!')
     return redirect(url_for('main_page'))
 
 
