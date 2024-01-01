@@ -4,7 +4,7 @@ import requests
 import secrets
 
 from db import db, Purchase, User, Item
-from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response, session, abort
+from flask import Flask, request, render_template, redirect, url_for, current_app, jsonify, make_response, session, abort, flash
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from dotenv import load_dotenv
 from urllib.parse import urlencode
@@ -158,7 +158,8 @@ def login():
         # Set the refresh token in an HTTP-only cookie
         response.set_cookie('refresh_token', refresh_token,
                             httponly=True, secure=True, samesite='Strict')
-
+        
+        flash('Welcome, ' + username + '!')
         return response
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
@@ -213,6 +214,7 @@ def logout():
                         httponly=True, secure=True, samesite='Strict')
     response.set_cookie('refresh_token', expires=0,
                         httponly=True, secure=True, samesite='Strict')
+    flash('You have been logged out.')
     return response
 
 
@@ -385,6 +387,7 @@ def oauth2_callback(provider):
         db.session.commit()
     
     login_user(user)
+    flash('Welcome, ' + username + '!')
     return redirect(url_for('main_page'))
 
 
