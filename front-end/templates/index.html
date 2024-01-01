@@ -1,6 +1,15 @@
 {%extends "header.html"%} {%block content%}
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <body>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div id="message">
+    {% for message in messages %}
+      {{ message }}<br>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
   <div class="container">
     <form id="expenseForm" enctype="multipart/form-data">
       <label for="expenseType">Expense Type:</label>
