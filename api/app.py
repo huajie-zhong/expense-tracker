@@ -271,6 +271,30 @@ def submit_expense():
         return success_response({"adjustedAmount": amount,
                                  "type": expense_type
                                  })
+    elif receipt_file is not None:
+        # If user is not logged in, don't store the purchase into the database and return the amount and type
+        receipt = Image.open(receipt_file)
+        amount = get_total_amount(receipt)
+        if amount is None:
+            return failure_response("total not found", 400)
+        
+        if current_user.is_anonymous:
+            return success_response({"adjustedAmount": amount,
+                                     "type": expense_type
+                                     })
+
+        # If user is logged in, store the purchase into the database and return the amount and type
+        amount = get_total_amount(receipt_file)
+        user = User.query.filter_by(id=current_user.id).first()
+        purchase = Purchase(
+            amount=amount, type=expense_type, date=datetime.now())
+        user.purchases.append(purchase)
+        db.session.add(purchase)
+        db.session.add(user)
+        db.session.commit()
+        return success_response({"adjustedAmount": amount,
+                                 "type": expense_type
+                                 })
     else:
         return failure_response("parameter not provided", 400)
 
