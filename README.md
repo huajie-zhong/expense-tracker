@@ -27,13 +27,16 @@ To use Expense Tracker, simply log in, and choose to either upload a receipt or 
 
 - **Python**: The backend of the application is built with Python.
 - **Flask**: Flask is used as the web framework.
+- **Flask-login**: Flask-login is used to handle user login session.
 - **Jinja2**: Jinja2 is used for templating and generating HTML dynamically.
 - **JavaScript**: JavaScript is used for client-side scripting.
 - **CSS**: CSS is used for styling the web pages.
 - **SQLAlchemy**: SQLAlchemy is used as the ORM for database operations.
 - **SQLite**: SQLite is used as the database.
 - **OAuth2**: OAuth2 is used for Google Login.
+- **Pillow**: Pillow is used to handle the images upload by users
 - **Tesseract OCR**: Tesseract OCR is used for extracting text from uploaded receipt images.
+- **Werkzeug**: werkzeug.security is used to generate secure password hashing to store in server database.
 
 ## Installation
 1. Clone the repository:
@@ -54,6 +57,7 @@ Create a .env file in the project root with the following variables:
     SECRET_KEY=your_secret_key
     GOOGLE_CLIENT_ID=your_google_client_id
     GOOGLE_CLIENT_SECRET=your_google_client_secret
+    TESSERACT_PATH=your_tesseract_installation_location
     ```
 
 4. Run the Flask application:
