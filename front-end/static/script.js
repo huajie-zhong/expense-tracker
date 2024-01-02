@@ -232,27 +232,29 @@ document
     register();
   });
 
-function logout() {
-  fetch("/api/logout/", {
-    method: "POST",
-  }).then((response) => {
-    if (!response.ok) {
-      console.error("Logout failed:", response.json().errorData.message);
-      window.location.replace("/");
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    console.log("Logout successful:", response.json().data);
-    window.location.reload();
-
-    response.json().then((data) => {
-      document.cookie = `access_token=${data.token}; path=/; secure; samesite=strict; HttpOnly`;
-      document.cookie = `refresh_token=${data.refresh_token}; path=/; secure; samesite=strict; HttpOnly`;
+  function logout() {
+    fetch("/api/logout/", {
+      method: "POST",
+    })
+    .then((response) => {
+      if (!response.ok) {
+        console.error("Logout failed:", response.statusText);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Logout successful:", data);
+      document.cookie = `access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; secure; samesite=strict; HttpOnly`;
+      document.cookie = `refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; secure; samesite=strict; HttpOnly`;
       expenses = {};
       categoryColors = {};
-      window.location.replace("/");
+      window.location.href = "/";
+    })
+    .catch((error) => {
+      console.error("Error:", error);
     });
-  });
-}
+  }
 
 
 // currency conversion methods
