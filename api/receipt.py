@@ -35,6 +35,8 @@ def get_total_amount(img):
         total = None
     return total
 
+
+# For testing purposes
 if __name__ == '__main__':
     directory = os.fsencode('test/receipts')
     for file in os.listdir(directory):
