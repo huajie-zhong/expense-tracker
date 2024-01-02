@@ -92,6 +92,17 @@ function submitExpense() {
 
       // Update the pie chart
       updatePieChart();
+
+      // Reset the form
+      const receiptInput = document.getElementById('receipt');
+      const previewImage = document.getElementById('preview');
+
+      // Reset the input element
+      receiptInput.value = '';
+
+      // Reset the img element
+      previewImage.src = '';
+      previewImage.style.display = 'none';
     });
   });
 }
