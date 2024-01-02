@@ -288,7 +288,6 @@ def submit_expense():
                                      })
 
         # If user is logged in, store the purchase into the database and return the amount and type
-        amount = get_total_amount(receipt_file)
         user = User.query.filter_by(id=current_user.id).first()
         purchase = Purchase(
             amount=amount, type=expense_type, date=datetime.now())
