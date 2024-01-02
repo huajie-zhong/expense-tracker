@@ -1,0 +1,26 @@
+{% extends "header.html" %}
+{% block content %}
+{% if current_user.is_authenticated %}
+<div class="container">
+<table id="expense-table">
+    <caption><h1 style="margin-bottom: 10px">Expense Report</h1></caption>
+    <caption><h3>Purchase History</h3></caption>
+    <tr id="heading">
+        <th>Type</th>
+        <th>Date</th>
+        <th>Amount</th>
+    </tr>
+    {% for purchase in current_user.purchases %}
+    <tr>
+        <td>{{ purchase.type }}</td>
+        <td>{{ purchase.date.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ purchase.amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% else %}
+<p id="message">Please login to view this page.</p>
+{% endif %}
+<script src="{{url_for('static', filename='script.js')}}"></script>
+{% endblock %}

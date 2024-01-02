@@ -109,12 +109,12 @@ def header_page():
     return render_template('header.html')
 
 
-@app.route('/settings/', methods=['GET', 'POST'])
-def settings_page():
+@app.route('/report/', methods=['GET', 'POST'])
+def report_page():
     if request.method == 'POST':
-        return redirect(url_for('settings'))
+        return redirect(url_for('report'))
 
-    return render_template('settings.html')
+    return render_template('report.html')
 
 
 @app.route('/login/', methods=['GET', 'POST'])
