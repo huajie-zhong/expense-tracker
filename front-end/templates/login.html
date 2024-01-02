@@ -8,8 +8,8 @@
 
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required />
-      <span class="Error" id="loginError"></span>
-        <a class="gsi-material-button" href="{{ url_for('oauth2_authorize', provider='google') }}" style="text-decoration: none; color: inherit; display: inline-block;">
+      <span class="Error" id="loginError"></span><br>
+        <a class="gsi-material-button" href="{{ url_for('oauth2_authorize', provider='google') }}" style="text-decoration: none; color: inherit; display: inline-block; margin: 10px auto;">
           <div class="gsi-material-button-state"></div>
           <div class="gsi-material-button-content-wrapper">
             <div class="gsi-material-button-icon">
