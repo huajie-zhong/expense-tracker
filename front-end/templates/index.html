@@ -37,7 +37,7 @@
       />
 
       <label for="receipt">Upload Receipt:</label>
-      <input type="file" id="receipt" name="receipt" onchange="previewImage()"/>
+      <input type="file" id="receipt" name="receipt" onchange="previewImage()" accept=".jpg, .png"/>
       <img id="preview" src="" alt="Image preview" style="display: none; margin: 20px 0;" />
 
       <button type="button" onclick="submitExpense()">Submit</button>
