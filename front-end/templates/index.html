@@ -37,7 +37,8 @@
       />
 
       <label for="receipt">Upload Receipt:</label>
-      <input type="file" id="receipt" name="receipt" />
+      <input type="file" id="receipt" name="receipt" onchange="previewImage()"/>
+      <img id="preview" src="" alt="Image preview" style="display: none; margin: 20px 0;" />
 
       <button type="button" onclick="submitExpense()">Submit</button>
     </form>
@@ -70,6 +71,22 @@
         document.getElementById("newOption").style.display = "none";
       }
     });  
+
+    function previewImage() {
+        const preview = document.getElementById('preview');
+        const file = document.getElementById('receipt').files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            // convert image file to base64 string
+            preview.src = reader.result;
+            preview.style.display = "block";
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
     </script>
 </body>
 {%endblock%}
