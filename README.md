@@ -42,7 +42,7 @@ To use Expense Tracker, simply log in, and choose to either upload a receipt or 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/expense-tracker.git
+   git clone https://github.com/huajie-zhong/expense-tracker.git
    cd expense-tracker
    ```
 
