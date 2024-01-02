@@ -49,6 +49,10 @@ function submitExpense() {
   var formData = new FormData();
 
   if (amount.trim() !== ""){
+    if(amount < 0){
+      alert("Please enter a positive amount.");
+      return;
+    }
     formData.append("amount", amount);
   }
   else if (receipt){
