@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  expense-tracker:
+    image: hz642/expense-tracker:latest
+    volumes:
+      - /home/hz642/IthacaTraveller.db:/usr/app/instance/IthacaTraveller.db
+    ports:
+      - "80:8000"
+    env_file:
+      - .env
