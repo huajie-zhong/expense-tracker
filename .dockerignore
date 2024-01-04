@@ -16,3 +16,5 @@ Dockerfile
 .git
 .gitattributes
 .gitignore
+
+instance/
