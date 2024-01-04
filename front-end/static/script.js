@@ -103,6 +103,9 @@ function submitExpense() {
       // Reset the img element
       previewImage.src = '';
       previewImage.style.display = 'none';
+
+      // Reset the expense amount input
+      document.getElementById("amount").value = "";
     });
   });
 }
