@@ -62,7 +62,7 @@ Create a .env file in the project root with the following variables:
 
 4. Run the Flask application:
    ```bash
-   python app.py
+   python api/app.py
    ```
    The application will be accessible at http://localhost:8000.
 
