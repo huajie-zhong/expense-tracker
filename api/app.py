@@ -312,6 +312,43 @@ def get_expenses():
     purchases = user.purchases
     return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
 
+@app.route("/api/exchange/")
+def get_exchange():
+
+    # amount = request.args.get('fromCurrencyAmount', type=float)
+    # fromCurrencyCode = request.args.get('fromCurrency', type=str)
+    # toCurrencyCode = request.args.get('toCurrency', type=str)
+
+    # Your logic here to handle the currency exchange
+
+    # for testing
+    amount = 1.0
+    fromCurrencyCode = 'CNY'
+    toCurrencyCode = 'JPY'
+    
+    # this is an api i found online that does not require a api key
+    api_key = 'fca_live_1kmx3TSEMi5MiRYV2xb9eZL3ThnUhCyYH1qVnIH4'
+    url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
+    response = requests.get(url)
+
+    # The 'data' dictionary holds exchange rates for various currencies, 
+    # with the US Dollar (USD) as the base currency.
+    data = response.json()
+
+    # rates is the value of data which contain all the rates
+    rates = data.get('data')
+
+    # get the fromCurrency rate
+    fromCurrencyCode_rate = rates.get(fromCurrencyCode)
+    # get the toCurrency_rate
+    toCurrencyCode_rate = rates.get(toCurrencyCode)
+
+    # do some simple math
+    rate = toCurrencyCode_rate/fromCurrencyCode_rate
+    res = amount * rate
+
+    return success_response({"toCurrencyAmount": round(res,2)})
+
 
 #---------------------OAuth login api-------------------
 @app.route('/api/authorize/<provider>')
