@@ -312,6 +312,10 @@ def get_expenses():
     purchases = user.purchases
     return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
 
+
+api_key = os.environ.get('API_KEY')
+url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
+
 @app.route("/api/exchange/")
 def get_exchange():
 
@@ -319,16 +323,10 @@ def get_exchange():
     # fromCurrencyCode = request.args.get('fromCurrency', type=str)
     # toCurrencyCode = request.args.get('toCurrency', type=str)
 
-    # Your logic here to handle the currency exchange
-
     # for testing
     amount = 1.0
-    fromCurrencyCode = 'CNY'
-    toCurrencyCode = 'JPY'
-    
-    # this is an api i found online that does not require a api key
-    api_key = 'fca_live_1kmx3TSEMi5MiRYV2xb9eZL3ThnUhCyYH1qVnIH4'
-    url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
+    fromCurrencyCode = 'USD'
+    toCurrencyCode = 'CNY'
     response = requests.get(url)
 
     # The 'data' dictionary holds exchange rates for various currencies, 
