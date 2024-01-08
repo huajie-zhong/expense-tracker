@@ -232,21 +232,7 @@ function register() {
   });
 }
 
-document
-  .getElementById("loginForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the default form submission
-    login();
-  });
-
-document
-  .getElementById("registerForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the default form submission
-    register();
-  });
-
-  function logout() {
+function logout() {
     fetch("/api/logout/", {
       method: "POST",
     })
@@ -271,7 +257,10 @@ document
   }
 
 
+
 // currency conversion methods
+
+
 
 function convertCurrency() {
     var fromCurrencyAmount = document.getElementById("fromCurrencyAmount").value;
@@ -299,3 +288,6 @@ function convertCurrency() {
         });
     });
 }
+
+
+

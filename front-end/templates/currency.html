@@ -2,7 +2,7 @@
 {% block content %}
 <body>
 <div class="container">
-<form>
+<form id="currencyForm">
         <table id="currency-conversion">
             <caption><h1 style="margin-bottom: 35px">Currency exchange</h1></caption>
             <tr>
@@ -46,9 +46,19 @@
                 </td>
             </tr>
         </table>
-        <button type="submit" onclick="convertCurrency()">Convert</button>
-    </div>
+        <button type="submit">Convert</button>
     </form>
+    </div>
     <script src="{{url_for('static', filename='script.js')}}"></script>
+    <script>
+    document
+        .getElementById("currencyForm")
+        .addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            console.log("submitting currency form");
+            debugger;
+            convertCurrency();
+        });
+    </script>
 </body>
 {% endblock %}
