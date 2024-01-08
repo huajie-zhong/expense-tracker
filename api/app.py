@@ -315,16 +315,9 @@ def get_expenses():
 @app.route("/api/exchange/")
 def get_exchange():
 
-    # amount = request.args.get('fromCurrencyAmount', type=float)
-    # fromCurrencyCode = request.args.get('fromCurrency', type=str)
-    # toCurrencyCode = request.args.get('toCurrency', type=str)
-
-    # Your logic here to handle the currency exchange
-
-    # for testing
-    amount = 1.0
-    fromCurrencyCode = 'CNY'
-    toCurrencyCode = 'JPY'
+    amount = request.args.get('fromCurrencyAmount', type=float)
+    fromCurrencyCode = request.args.get('fromCurrency', type=str)
+    toCurrencyCode = request.args.get('toCurrency', type=str)
     
     # this is an api i found online that does not require a api key
     api_key = 'fca_live_1kmx3TSEMi5MiRYV2xb9eZL3ThnUhCyYH1qVnIH4'
