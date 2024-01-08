@@ -313,6 +313,12 @@ def get_expenses():
     return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
 
 
+#Temporary storing the data from the api, reduce the number of api calls and optimize the performance
+#Set to be expired after 1 day
+exchange_rate=(datetime.now()-timedelta(days=1), 
+               {
+                     "rates": None
+               })
 
 @app.route("/api/exchange/")
 def get_exchange():
@@ -321,22 +327,24 @@ def get_exchange():
     fromCurrencyCode = request.args.get('fromCurrency', type=str)
     toCurrencyCode = request.args.get('toCurrency', type=str)
     
-    # this is an api i found online that does not require a api key
-    api_key = os.environ.get('API_KEY')
-    url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
-    response = requests.get(url)
+    global exchange_rate
 
-    # The 'data' dictionary holds exchange rates for various currencies, 
-    # with the US Dollar (USD) as the base currency.
-    data = response.json()
+    if datetime.now() - exchange_rate[0] >= timedelta(days=1):
+        # this is an api i found online that does not require a api key
+        api_key = os.environ.get('CURRENCY_API_KEY')
+        url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
+        response = requests.get(url)
 
-    # rates is the value of data which contain all the rates
-    rates = data.get('data')
+        # The 'data' dictionary holds exchange rates for various currencies, 
+        # with the US Dollar (USD) as the base currency.
+        data = response.json()
+        
+        exchange_rate = (datetime.now(), data.get('data'))
 
     # get the fromCurrency rate
-    fromCurrencyCode_rate = rates.get(fromCurrencyCode)
+    fromCurrencyCode_rate = exchange_rate[1].get(fromCurrencyCode)
     # get the toCurrency_rate
-    toCurrencyCode_rate = rates.get(toCurrencyCode)
+    toCurrencyCode_rate = exchange_rate[1].get(toCurrencyCode)
 
     # do some simple math
     rate = toCurrencyCode_rate/fromCurrencyCode_rate
