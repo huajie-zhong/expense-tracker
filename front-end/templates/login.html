@@ -84,6 +84,20 @@
         document.getElementById("showLogin").style.display = "none";
         document.getElementById("showRegister").style.display = "block";
       });
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the default form submission
+          login();
+        });
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the default form submission
+          register();
+        });
   </script>
   <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
