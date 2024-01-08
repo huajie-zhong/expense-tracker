@@ -313,8 +313,6 @@ def get_expenses():
     return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
 
 
-api_key = os.environ.get('API_KEY')
-url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
 
 @app.route("/api/exchange/")
 def get_exchange():
@@ -324,7 +322,7 @@ def get_exchange():
     toCurrencyCode = request.args.get('toCurrency', type=str)
     
     # this is an api i found online that does not require a api key
-    api_key = 'fca_live_1kmx3TSEMi5MiRYV2xb9eZL3ThnUhCyYH1qVnIH4'
+    api_key = os.environ.get('API_KEY')
     url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
     response = requests.get(url)
 
