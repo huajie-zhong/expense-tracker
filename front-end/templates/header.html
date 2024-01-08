@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <title>Expense Tracker</title>
+  </head>
+  <body>
+    <header>
+      <a
+        href="{{ url_for('main_page')}}"
+        style="text-decoration: none; color: inherit"
+      >
+        <div id="title">
+          <h1>Expense Tracker</h1>
+        </div>
+      </a>
+      <div id="header-left">
+        <a
+          href="{{ url_for('currency_page')}}"
+          style="text-decoration: none; color: inherit"
+        >
+          <div id="currency-button" class="header-option">Currency</div>
+        </a>
+
+        <a
+          href="{{ url_for('report_page')}}"
+          style="text-decoration: none; color: inherit"
+        >
+          <div id="settings-button" class="header-option">Report</div>
+        </a>
+      </div>
+      {% if current_user.is_authenticated %}
+      <div id="header-right">
+        <div
+          id="username"
+          class="header-option"
+          style="transition: none; pointer-events: none"
+        >
+          {{ current_user.username }}
+        </div>
+        <a
+          href="#"
+          onclick="logout()"
+          style="text-decoration: none; color: inherit"
+        >
+          <div id="logout-button" class="header-option">Logout</div>
+        </a>
+      </div>
+      {% else %}
+      <div id="header-right">
+        <a
+          href="{{ url_for('login_page')}}"
+          style="text-decoration: none; color: inherit"
+        >
+          <div id="login-button" class="header-option">Login</div>
+        </a>
+      </div>
+      {% endif %}
+    </header>
+    {% block content %} {% endblock %}
+  </body>
+</html>
