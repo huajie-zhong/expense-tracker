@@ -312,6 +312,10 @@ def get_expenses():
     purchases = user.purchases
     return success_response({"purchases": [purchase.serialize() for purchase in purchases]})
 
+
+api_key = os.environ.get('API_KEY')
+url = f'https://api.freecurrencyapi.com/v1/latest?apikey={api_key}'
+
 @app.route("/api/exchange/")
 def get_exchange():
 
