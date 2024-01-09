@@ -58,6 +58,7 @@ Create a .env file in the project root with the following variables:
     GOOGLE_CLIENT_ID=your_google_client_id
     GOOGLE_CLIENT_SECRET=your_google_client_secret
     TESSERACT_PATH=your_tesseract_installation_location
+    CURRENCY_API_KEY=yoru_currency_api_key
     ```
 
 4. Run the Flask application:
