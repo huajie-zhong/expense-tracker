@@ -18,6 +18,7 @@ Expense Tracker is a comprehensive expense reporting system designed to simplify
 - **Detailed Reporting**: Expense Tracker generates detailed, interactive reports based on the recorded data. This allows users to easily visualize and understand their spending habits.
 - **Secure Login**: System also features mordern secure login that no one else can access user's own sensitive data
 - **Google Login**: For added convenience, users can also log in using their Google accounts.
+- **Real-time Currency Exchange inquiry**: Using FreecurrencyAPI, application provides accurate Real-time currency conversion
 
 ## Usage
 
@@ -37,6 +38,7 @@ To use Expense Tracker, simply log in, and choose to either upload a receipt or 
 - **Pillow**: Pillow is used to handle the images upload by users
 - **Tesseract OCR**: Tesseract OCR is used for extracting text from uploaded receipt images.
 - **Werkzeug**: werkzeug.security is used to generate secure password hashing to store in server database.
+- **APIs**: FreecurrencyAPI is used for currency conversion data.
 
 ## Installation
 1. Clone the repository:
